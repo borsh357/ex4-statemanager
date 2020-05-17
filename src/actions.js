@@ -1,41 +1,27 @@
 import state from './store';
 
 export function getFilteredProducts() {
-  let filteredProducts = [];
   if (state.filters.isAllChecked)
     return sortByAmount(state.sortOrder, state.products);
 
-  if (state.filters.isFruitChecked) {
-    state.products.map((product) => {
-      if (product.category === 'fruit') filteredProducts.push(product);
-    });
-  }
-
-  if (state.filters.isVegetablesChecked) {
-    state.products.map((product) => {
-      if (product.category === 'vegetable') filteredProducts.push(product);
-    });
-  }
-
-  if (state.filters.isCannedfoodChecked) {
-    state.products.map((product) => {
-      if (product.category === 'canned') filteredProducts.push(product);
-    });
-  }
+  const filteredProducts = state.products.filter((product) => {
+    return (
+      (state.filters.isFruitChecked && product.category === 'fruit') ||
+      (state.filters.isVegetablesChecked && product.category === 'vegetable') ||
+      (state.filters.isCannedfoodChecked && product.category === 'canned')
+    );
+  });
 
   return sortByAmount(state.sortOrder, filteredProducts);
 }
 
 function sortByAmount(order, list) {
-  if (order) {
-    list.sort(function (a, b) {
+  list.sort(function (a, b) {
+    if (order) {
       return a.amount - b.amount;
-    });
-    return list;
-  } else {
-    list.sort(function (a, b) {
+    } else {
       return (a.amount - b.amount) * -1;
-    });
-    return list;
-  }
+    }
+  });
+  return list;
 }
